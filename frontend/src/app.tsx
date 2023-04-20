@@ -72,24 +72,26 @@ export const App = () => {
   }, [responseCreator])
 
   return (
-    <>
-      <div>
-        <label>Archivo original:</label>
-        <input type="file" id="original" name="original" onChange={e => setOriginalPERoute("")} value={originalPERoute} />
-      </div>
+    <body>
+      <main class={'container'}>
+        <div>
+          <label>Archivo original:</label>
+          <input type="file" id="original" name="original" onChange={e => setOriginalPERoute("")} value={originalPERoute} />
+        </div>
 
-      <div>
-        <label>Ruta output:</label>
-        <input type="file" id="original" name="original" onChange={e => setOutputPERoute("")} value={outputPERoute} />
-      </div>
+        <div>
+          <label>Ruta output:</label>
+          <input type="file" id="original" name="original" onChange={e => setOutputPERoute("")} value={outputPERoute} />
+        </div>
 
-      <div>
-        <label>API KEY:</label>
-        <input type="file" id="original" name="original" onChange={e => setKey("")} value={key} />
-      </div>
+        <div class={'row'}>
+          <label>API KEY:</label>
+          <input type="file" id="original" name="original" onChange={e => setKey("")} value={key} />
+        </div>
 
-      <button className="btn" onClick={create}>Protect!</button>
-      <text>{displayReturnMessage}</text>
-    </>
+        <button className="btn" onClick={create}>Protect!</button>
+        <text>{displayReturnMessage}</text>
+      </main>
+    </body>
   )
 }
