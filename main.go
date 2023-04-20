@@ -18,8 +18,8 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "CreatorDesktop",
-		Width:  1024,
-		Height: 768,
+		Width:  410,
+		Height: 460,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -28,6 +28,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 		},
+		DisableResize: true,
 	})
 
 	if err != nil {
