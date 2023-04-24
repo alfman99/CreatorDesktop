@@ -1,6 +1,7 @@
 import {CallCreator, SelectOriginalPE, SetSavePath} from "../wailsjs/go/main/App";
 import {h} from 'preact';
 import {useEffect, useState} from "preact/hooks";
+import {JSXInternal} from "preact/src/jsx";
 
 
 // Return codes from Creator.exe
@@ -36,6 +37,10 @@ export const App = () => {
   const handleSetSavePath = async () => {
     const response = await SetSavePath()
     setOutputPERoute(response as string)
+  }
+
+  const handleChangeAPIKey = (event: JSXInternal.TargetedEvent<HTMLInputElement>) => {
+    setKey(event.currentTarget.value)
   }
 
   const create = async () => {
@@ -118,7 +123,7 @@ export const App = () => {
 
         <div>
           <label><b>API KEY:</b></label>
-          <input type="text" onChange={e => setKey("")} value={key} placeholder={'Key de la API'} />
+          <input type="text" onChange={handleChangeAPIKey} value={key} placeholder={'Key de la API'} />
         </div>
 
         <button className={"btn" && isLoading ? "secondary" : "" } onClick={create} aria-busy={isLoading}>Protect</button>
