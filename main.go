@@ -19,7 +19,7 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:  "CreatorDesktop",
 		Width:  410,
-		Height: 460,
+		Height: 470,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

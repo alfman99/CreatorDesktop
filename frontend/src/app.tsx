@@ -1,4 +1,4 @@
-import {CallCreator} from "../wailsjs/go/main/App";
+import {CallCreator, SelectOriginalPE, SetSavePath} from "../wailsjs/go/main/App";
 import {h} from 'preact';
 import {useEffect, useState} from "preact/hooks";
 
@@ -24,9 +24,19 @@ export const App = () => {
   const [responseColor, setResponseColor] = useState<string>("")
   const [displayReturnMessage, setDisplayReturnMessage] = useState<string>("Welcome!")
 
-  const [originalPERoute, setOriginalPERoute] = useState<string>("")
-  const [outputPERoute, setOutputPERoute] = useState<string>("")
+  const [originalPERoute, setOriginalPERoute] = useState<string>("Not selected")
+  const [outputPERoute, setOutputPERoute] = useState<string>("Not selected")
   const [key, setKey] = useState<string>("")
+
+  const handleUploadOriginalPE = async () => {
+    const response = await SelectOriginalPE()
+    setOriginalPERoute(response as string)
+  }
+
+  const handleSetSavePath = async () => {
+    const response = await SetSavePath()
+    setOutputPERoute(response as string)
+  }
 
   const create = async () => {
     setShowMessage(false)
@@ -97,17 +107,17 @@ export const App = () => {
     <body>
       <main class={'container'}>
         <div>
-          <label>Archivo original:</label>
-          <input type="file" accept={'*.exe'} onChange={e => setOriginalPERoute("")} value={originalPERoute} />
+          <label><b>Archivo original:</b> {originalPERoute}</label>
+          <button onClick={handleUploadOriginalPE}>Seleccionar archivo input (.exe)</button>
         </div>
 
         <div>
-          <label>Ruta output:</label>
-          <input type="file" onChange={e => setOutputPERoute("")} value={outputPERoute} />
+          <label><b>Ruta output:</b> {outputPERoute}</label>
+          <button onClick={handleSetSavePath}>Seleccionar archivo output</button>
         </div>
 
-        <div class={'row'}>
-          <label>API KEY:</label>
+        <div>
+          <label><b>API KEY:</b></label>
           <input type="text" onChange={e => setKey("")} value={key} placeholder={'Key de la API'} />
         </div>
 

@@ -5,3 +5,11 @@
 export function CallCreator(arg1, arg2, arg3) {
   return window['go']['main']['App']['CallCreator'](arg1, arg2, arg3);
 }
+
+export function SelectOriginalPE() {
+  return window['go']['main']['App']['SelectOriginalPE']();
+}
+
+export function SetSavePath() {
+  return window['go']['main']['App']['SetSavePath']();
+}

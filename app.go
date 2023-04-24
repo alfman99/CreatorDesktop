@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"os/exec"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -33,7 +35,7 @@ const (
 
 // Calls Creator.exe with the given arguments
 func (a *App) CallCreator(originalPe string, outputPath string, apiKey string) int8 {
-	cmd := exec.Command("X:\\Carrera\\__TFG\\development\\__Protector\\CreatorDesktop\\dependencies\\Creator.exe", originalPe, "X:\\Carrera\\__TFG\\development\\__Protector\\CreatorDesktop\\dependencies\\Stub.exe", outputPath, apiKey)
+	cmd := exec.Command("./dependencies/Creator.exe", originalPe, "./dependencies/Stub.exe", outputPath, apiKey)
 	if err := cmd.Run(); err != nil {
 		if exitError, ok := err.(*exec.ExitError); ok {
 			return int8(exitError.ExitCode())
@@ -41,4 +43,36 @@ func (a *App) CallCreator(originalPe string, outputPath string, apiKey string) i
 		return UNEXPECTED_ERROR
 	}
 	return SUCCESS
+}
+
+// SelectOriginalPE opens a file dialog and returns the selected file
+func (a *App) SelectOriginalPE() string {
+	file, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: ".exe",
+				Pattern:     "*.exe",
+			},
+		},
+	})
+	if err != nil {
+		return err.Error()
+	}
+	return file
+}
+
+// SetSavePath opens a file dialog and returns the selected file
+func (a *App) SetSavePath() string {
+	file, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: ".exe",
+				Pattern:     "*.exe",
+			},
+		},
+	})
+	if err != nil {
+		return err.Error()
+	}
+	return file
 }
