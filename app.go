@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"fmt"
 	"os/exec"
+	"syscall"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -30,19 +33,32 @@ const (
 	ERROR_STUB_NOT_FOUND        int8 = -2
 	ERROR_EXE_TO_DLL            int8 = -3
 	ERROR_REGISTER_PROJECT      int8 = -4
-	UNEXPECTED_ERROR            int8 = -5
 )
 
 // Calls Creator.exe with the given arguments
-func (a *App) CallCreator(originalPe string, outputPath string, apiKey string) int8 {
-	cmd := exec.Command("./dependencies/Creator.exe", originalPe, "./dependencies/Stub.exe", outputPath, apiKey)
-	if err := cmd.Run(); err != nil {
-		if exitError, ok := err.(*exec.ExitError); ok {
-			return int8(exitError.ExitCode())
+func (a *App) CallCreator(originalPe string, outputPath string, apiKey string) int32 {
+	// Call Creator.exe
+	cmd := exec.Command("./Creator.exe", originalPe, "./Stub.exe", outputPath, apiKey)
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+
+	fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
+	fmt.Println("Result: " + out.String())
+
+	if err != nil {
+		if e2, ok := err.(*exec.ExitError); ok {
+			if s, ok := e2.Sys().(syscall.WaitStatus); ok {
+				code := int32(s.ExitCode)
+				fmt.Println("Exit code: ", code)
+				return code
+			}
 		}
-		return UNEXPECTED_ERROR
+		return int32(SUCCESS)
 	}
-	return SUCCESS
+	return int32(SUCCESS)
 }
 
 // SelectOriginalPE opens a file dialog and returns the selected file
@@ -50,7 +66,7 @@ func (a *App) SelectOriginalPE() string {
 	file, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Filters: []runtime.FileFilter{
 			{
-				DisplayName: ".exe",
+				DisplayName: "Aplicación",
 				Pattern:     "*.exe",
 			},
 		},
@@ -66,7 +82,7 @@ func (a *App) SetSavePath() string {
 	file, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		Filters: []runtime.FileFilter{
 			{
-				DisplayName: ".exe",
+				DisplayName: "Aplicación",
 				Pattern:     "*.exe",
 			},
 		},

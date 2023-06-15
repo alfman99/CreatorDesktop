@@ -11,8 +11,7 @@ enum ReturnValues {
 	ERROR_ORIGINAL_PE_NOT_FOUND  = -1,
 	ERROR_STUB_NOT_FOUND         = -2,
 	ERROR_EXE_TO_DLL             = -3,
-	ERROR_REGISTER_PROJECT       = -4,
-	UNEXPECTED_ERROR             = -5
+	ERROR_REGISTER_PROJECT       = -4
 }
 
 
@@ -21,7 +20,7 @@ export const App = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showMessage, setShowMessage] = useState<boolean>(false)
 
-  const [responseCreator, setResponseCreator] = useState<ReturnValues>(1)
+  const [responseCreator, setResponseCreator] = useState<ReturnValues>(ReturnValues.INIT)
   const [responseColor, setResponseColor] = useState<string>("")
   const [displayReturnMessage, setDisplayReturnMessage] = useState<string>("Welcome!")
 
@@ -30,12 +29,23 @@ export const App = () => {
   const [key, setKey] = useState<string>("")
 
   const handleUploadOriginalPE = async () => {
-    const response = await SelectOriginalPE()
+    let response = await SelectOriginalPE()
+    response = response.replaceAll("\\", "\\\\")
+
     setOriginalPERoute(response as string)
   }
 
   const handleSetSavePath = async () => {
-    const response = await SetSavePath()
+    let response = await SetSavePath()
+    response = response.replaceAll("\\", "\\\\")
+
+    
+    const extension = response.split('.').pop()
+    if (extension !== "exe") {
+      response += ".exe"
+    }
+    console.log(response)
+
     setOutputPERoute(response as string)
   }
 
@@ -46,6 +56,7 @@ export const App = () => {
   const create = async () => {
     setShowMessage(false)
     setIsLoading(true)
+    console.log(originalPERoute, outputPERoute, key)
     const response = await CallCreator(
       originalPERoute, 
       outputPERoute, 
@@ -71,7 +82,7 @@ export const App = () => {
         break;
       }
       case ReturnValues.SUCCESS: {
-        setResponseColor("")
+        setResponseColor("#00FF00")
         setDisplayReturnMessage("Success!")
         break;
       }
@@ -95,7 +106,6 @@ export const App = () => {
         setDisplayReturnMessage("[Error] Registering project, API key invalid or server down")
         break;
       }
-      case ReturnValues.UNEXPECTED_ERROR: 
       default: {
         setResponseColor("#FF0000")
         setDisplayReturnMessage("[Error] Unexpected error")
